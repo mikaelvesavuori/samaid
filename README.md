@@ -36,7 +36,8 @@ If you do not provide an output file name, then `samaid.diagram.mmd` will be use
 
 An output file name must use the `.mmd` ending.
 
-If you want to have your README file updated, the area between the start and end markers `<!-- START DIAGRAM -->
+If you want to have your README file updated, the area between the start and end markers `<!-- START DIAGRAM -->` and `<!-- END DIAGRAM -->` will be used.
+
 ```mermaid
 graph TD
   subgraph API
@@ -58,7 +59,6 @@ graph TD
   end
 
 ```
-<!-- END DIAGRAM -->` will be used.
 
 ## Example
 
