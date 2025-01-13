@@ -38,28 +38,6 @@ An output file name must use the `.mmd` ending.
 
 If you want to have your README file updated, the area between the start and end markers `<!-- START DIAGRAM -->` and `<!-- END DIAGRAM -->` will be used.
 
-```mermaid
-graph TD
-  subgraph API
-    HttpApi
-  end
-  subgraph DynamoDB
-    example-api
-  end
-  subgraph Functions
-    Demo --> |PutItem| example-api
-    Demo --> |Query| example-api
-    HttpApi --> |GET| Demo
-    Demo2 --> |PutItem| example-api
-    Demo2 --> |Query| example-api
-    Demo2
-  end
-  subgraph EventBridge
-    bloop --> |Triggers| Demo2
-  end
-
-```
-
 ## Example
 
 **samaid** uses a bit of test data for a simple service which converts to this Mermaid diagram:
