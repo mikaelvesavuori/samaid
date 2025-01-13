@@ -32,7 +32,6 @@ test('It should generate a diagram with all components', () => {
   const mermaidDiagram = new Samaid(filePath).generate();
 
   expect(mermaidDiagram).toBe(expected);
-  expect(readFileSync(outputPath, 'utf-8')).toBe(expected);
 });
 
 test('It should generate a diagram with all components and save it', () => {
