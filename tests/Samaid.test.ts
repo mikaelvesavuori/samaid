@@ -28,23 +28,28 @@ const expected = `graph TD
   end
 `;
 
-test('It should generate a diagram with all components', () => {
+test.sequential('It should generate a diagram with all components', () => {
   const mermaidDiagram = new Samaid(filePath).generate();
 
   expect(mermaidDiagram).toBe(expected);
 });
 
-test('It should generate a diagram with all components and save it', () => {
-  const mermaidDiagram = new Samaid(filePath).generate(outputPath);
+test.sequential(
+  'It should generate a diagram with all components and save it',
+  () => {
+    const mermaidDiagram = new Samaid(filePath).generate(outputPath);
 
-  expect(mermaidDiagram).toBe(expected);
-  expect(readFileSync(outputPath, 'utf-8')).toBe(expected);
+    expect(mermaidDiagram).toBe(expected);
+    expect(readFileSync(outputPath, 'utf-8')).toBe(expected);
 
-  remove(outputPath);
-});
+    remove(outputPath);
+  },
+);
 
-test('It should generate a diagram with all components and update the README', () => {
-  const readmeContent = `# README test
+test.sequential(
+  'It should generate a diagram with all components and update the README',
+  () => {
+    const readmeContent = `# README test
 
 Test file.
 
@@ -74,16 +79,17 @@ graph TD
 
 `;
 
-  writeFileSync(readmePath, readmeContent, 'utf8');
+    writeFileSync(readmePath, readmeContent, 'utf8');
 
-  const mermaidDiagram = new Samaid(filePath).generate(outputPath, true);
+    const mermaidDiagram = new Samaid(filePath).generate(outputPath, true);
 
-  expect(mermaidDiagram).toBe(expected);
-  expect(readFileSync(outputPath, 'utf-8')).toBe(expected);
-  expect(readFileSync(readmePath, 'utf-8')).toBe(readmeContent);
+    expect(mermaidDiagram).toBe(expected);
+    expect(readFileSync(outputPath, 'utf-8')).toBe(expected);
+    expect(readFileSync(readmePath, 'utf-8')).toBe(readmeContent);
 
-  remove(outputPath);
-  remove(readmePath);
-});
+    remove(outputPath);
+    remove(readmePath);
+  },
+);
 
 afterAll(() => remove('samaid.diagram.mmd'));
