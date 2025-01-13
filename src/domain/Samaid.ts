@@ -63,7 +63,11 @@ export class Samaid {
       );
 
     if (outputPath) save(diagram, outputPath);
-    if (shouldUpdateReadme) updateReadme('README.md', diagram);
+    if (shouldUpdateReadme)
+      updateReadme(
+        process.env.NODE_ENV === 'test' ? '__test_readme__.md' : 'README.md',
+        diagram,
+      );
 
     return diagram;
   }
