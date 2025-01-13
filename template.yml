@@ -1,0 +1,203 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Example project for Samaid
+
+Parameters:
+  # Project-specific parameters
+  ProjectName:
+    Type: String
+    Default: example-api
+    Description: API name
+
+  TableName:
+    Type: String
+    Default: example-api
+    Description: Name of the DynamoDB table
+
+  MaxLifeInDays:
+    Type: Number
+    Default: 90
+    Description: Max date range in days when setting expiration on items
+
+  # General parameters
+  Region:
+    Type: String
+    Default: eu-west-1
+    Description: AWS Region for the resources
+
+  LogRetentionInDays:
+    Type: Number
+    Default: 7
+
+  AuthorizerArn:
+    Type: String
+    Default: arn:aws:lambda:eu-west-1:123412341234:function:control-api-Authorizer
+    Description: ARN of the authorizer
+
+Globals:
+  Function:
+    Architectures:
+      - arm64
+    Runtime: nodejs22.x
+    MemorySize: 1024
+    Timeout: 10
+    Tags:
+        System: !Ref ProjectName
+    LoggingConfig:
+      LogFormat: JSON
+      ApplicationLogLevel: INFO
+      SystemLogLevel: WARN
+
+Resources:
+  #########
+  ## API ##
+  #########
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Ref ProjectName
+      Auth:
+        DefaultAuthorizer: ApiAuthorizer
+        Authorizers:
+          ApiAuthorizer:
+            EnableFunctionDefaultPermissions: true
+            EnableSimpleResponses: true
+            AuthorizerPayloadFormatVersion: "2.0"
+            FunctionArn: !Ref AuthorizerArn
+
+  ###########################
+  ## API-FRONTED FUNCTIONS ##
+  ###########################
+  DemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${ProjectName}-Demo"
+      CodeUri: dist/Demo
+      Handler: index.handler
+      Description: Example 1
+      Events:
+        HttpApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /example/{organizationId}/{somethingId}
+            Method: GET
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:CreateLogGroup
+                - logs:PutLogEvents
+              Resource: !Sub "arn:${AWS::Partition}:logs:${Region}:${AWS::AccountId}:log-group:/aws/lambda/${ProjectName}-Demo*:*"
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:Query
+              Resource: !Sub "arn:aws:dynamodb:${Region}:${AWS::AccountId}:table/${TableName}"
+      Environment:
+        Variables:
+          REGION: !Ref Region
+          TABLE_NAME: !Ref TableName
+    DependsOn:
+      - DemoLogGroup
+
+  ############################
+  ## EVENT-DRIVEN FUNCTIONS ##
+  ############################
+  Demo2Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${ProjectName}-Demo2"
+      CodeUri: dist/Demo2
+      Handler: index.handler
+      Description: Example
+      Events:
+        CatalogUpdatedEvent:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              detail-type:
+                - 'bloop'
+              detail:
+                data:
+                  type:
+                    - 'something'
+                    - 'something-else'
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:CreateLogGroup
+                - logs:PutLogEvents
+              Resource: !Sub "arn:${AWS::Partition}:logs:${Region}:${AWS::AccountId}:log-group:/aws/lambda/${ProjectName}-Demo2*:*"
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:Query
+              Resource: !Sub "arn:aws:dynamodb:${Region}:${AWS::AccountId}:table/${TableName}"
+      Environment:
+        Variables:
+          REGION: !Ref Region
+          TABLE_NAME: !Ref TableName
+          MAX_LIFE_IN_DAYS: !Ref MaxLifeInDays
+    DependsOn:
+      - Demo2LogGroup
+
+  ################
+  ## LOG GROUPS ##
+  ################
+  Demo2LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${ProjectName}-Demo2"
+      RetentionInDays: !Ref LogRetentionInDays
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  DemoLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${ProjectName}-Demo"
+      RetentionInDays: !Ref LogRetentionInDays
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  ###########
+  ## OTHER ##
+  ###########
+  ExampleTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: x
+        Enabled: true
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+#############
+## OUTPUTS ##
+#############
+Outputs:
+  HttpApiUrl:
+    Description: HTTP API endpoint
+    Value: !Sub "https://${HttpApi}.execute-api.${Region}.${AWS::URLSuffix}"
+    Export:
+      Name: !Sub "${ProjectName}-HttpApiUrl"

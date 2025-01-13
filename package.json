@@ -1,0 +1,63 @@
+{
+  "name": "samaid",
+  "description": "Magically transform AWS SAM templates to Mermaid diagrams",
+  "version": "0.0.1",
+  "author": "Mikael Vesavuori",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikaelvesavuori/samaid.git"
+  },
+  "keywords": [
+    "aws",
+    "aws-sam",
+    "mermaid",
+    "diagrams",
+    "diagram-generator"
+  ],
+  "bin": {
+    "samaid": "lib/index.js"
+  },
+  "bugs": {
+    "url": "https://github.com/mikaelvesavuori/samaid/issues"
+  },
+  "homepage": "https://github.com/mikaelvesavuori/samaid#readme",
+  "files": [
+    "/lib",
+    "!/lib/**/*.map",
+    "!/tests"
+  ],
+  "scripts": {
+    "test": "npx vitest run --coverage",
+    "test:watch": "npx vitest",
+    "build": "npm run clean && tsup src --format esm,cjs --dts && mv dist lib",
+    "clean": "rm -rf lib && rm -rf dist",
+    "lint": "npx @biomejs/biome check --write ./src",
+    "package": "npm pack",
+    "prepublishOnly": "npm run build",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "js-yaml": "4",
+    "js-yaml-cloudformation-schema": "1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1",
+    "@types/js-yaml": "4",
+    "@types/node": "latest",
+    "@vitest/coverage-v8": "latest",
+    "husky": "latest",
+    "tsup": "latest",
+    "typescript": "5",
+    "vitest": "latest"
+  }
+}
