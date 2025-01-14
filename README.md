@@ -46,7 +46,7 @@ npx samaid --readme
 npx samaid --output my_diagram.mmd
 npx samaid -o my_diagram.mmd
 
-# Output to a file
+# Use a template at a specific path
 npx samaid --template my_template.yml
 npx samaid -t my_template.yml
 ```
