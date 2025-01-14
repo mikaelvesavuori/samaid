@@ -18,7 +18,7 @@ export function cliParser() {
       const nextArg = args[i + 1];
       if (nextArg && /\.(yml|yaml)$/i.test(nextArg)) {
         parsed.templatePath = nextArg;
-        i++; // skip next argument since it's consumed
+        i++;
       } else {
         throw new Error(
           'Invalid or missing file name for --template/-t argument.',
@@ -30,7 +30,7 @@ export function cliParser() {
       const nextArg = args[i + 1];
       if (nextArg && nextArg.endsWith('.mmd')) {
         parsed.outputPath = nextArg;
-        i++; // skip next argument since it's consumed
+        i++;
       } else {
         throw new Error(
           'Invalid or missing file name for --output/-o argument.',
