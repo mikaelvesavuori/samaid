@@ -1,7 +1,7 @@
 {
   "name": "samaid",
   "description": "Magically transform AWS SAM templates to Mermaid diagrams",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Mikael Vesavuori",
   "license": "MIT",
   "type": "module",

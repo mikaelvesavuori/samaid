@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 
+import path from 'path';
+
 import { Samaid } from './domain/Samaid.js';
+
+import { cliParser } from './application/cliParser.js';
 
 /**
  * @description Run Samaid.
  */
 async function main(): Promise<void> {
   const isRunFromCommandLine = process.argv[1]?.includes(
-    'node_modules/.bin/samaid',
+    path.join('node_modules', '.bin', 'samaid'),
   );
   if (!isRunFromCommandLine) return;
 
-  const [, , ...args] = process.argv;
-  const templatePath = 'template.yml';
-  const outputPath =
-    args.find((value) => value.endsWith('.mmd')) || 'samaid.diagram.mmd';
-  const shouldUpdateReadme = args.includes('--readme');
-
   try {
+    const { templatePath, outputPath, shouldUpdateReadme } = cliParser();
+
     new Samaid(templatePath).generate(outputPath, shouldUpdateReadme);
   } catch (error: any) {
-    console.error(error);
+    console.error(`Error: ${error.message}`);
   }
 }
 

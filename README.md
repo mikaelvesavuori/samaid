@@ -6,11 +6,17 @@
 
 Ever wanted to quickly and painlessly just magically get Mermaid templates from your AWS SAM templates? That's what **samaid** does for you.
 
-The support is still limited and is first and foremost adapted for common needs in my own contexts. It currently supports DynamoDB (`AWS::DynamoDB::Table`), Lambda functions (`AWS::Serverless::Function`), HTTP APIs (`AWS::Serverless::HttpApi`), and S3 (`AWS::S3::Bucket`).
+**samaid** supports both being run as a Node module and as a CLI tool.
+
+## Name
+
+Why the name?! SAM + Mermaid = samaid.
 
 ## Usage
 
-### Basic importing and usage
+First, install the module with `npm install samaid`.
+
+### Node module example
 
 ```typescript
 // ES5 format
@@ -28,15 +34,36 @@ new Samaid(filePath).generate(outputPath);
 new Samaid(filePath).generate(outputPath, true);
 ```
 
-### Defaults and assumptions
+### CLI tool examples
 
-You must have a SAM template named `template.yml`.
+```bash
+npx samaid
 
-If you do not provide an output file name, then `samaid.diagram.mmd` will be used.
+# Update README
+npx samaid --readme
+
+# Output to a file
+npx samaid --output my_diagram.mmd
+npx samaid -o my_diagram.mmd
+
+# Output to a file
+npx samaid --template my_template.yml
+npx samaid -t my_template.yml
+```
+
+All commands can be combined.
+
+If you do not provide a template name, then `template.yml` will be used.
 
 An output file name must use the `.mmd` ending.
 
-If you want to have your README file updated, the area between the start and end markers `<!-- START DIAGRAM -->` and `<!-- END DIAGRAM -->` will be used.
+## Infrastructure support
+
+The infra support is still limited and is first and foremost adapted for common needs in my own contexts. It currently supports DynamoDB (`AWS::DynamoDB::Table`), Lambda functions (`AWS::Serverless::Function`), HTTP APIs (`AWS::Serverless::HttpApi`), and S3 (`AWS::S3::Bucket`).
+
+## Defaults and assumptions
+
+If you want to have your `README.md` file updated with the diagram, the area between the start and end markers `<!-- START DIAGRAM -->` and `<!-- END DIAGRAM -->` will be used.
 
 ## Example
 
