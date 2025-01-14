@@ -11,7 +11,7 @@ Parameters:
 
   TableName:
     Type: String
-    Default: example-api
+    Default: example-table
     Description: Name of the DynamoDB table
 
   MaxLifeInDays:

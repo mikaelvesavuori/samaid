@@ -75,14 +75,14 @@ graph TD
     HttpApi
   end
   subgraph DynamoDB
-    example-api
+    example-table
   end
   subgraph Functions
-    Demo --> |PutItem| example-api
-    Demo --> |Query| example-api
+    Demo --> |PutItem| example-table
+    Demo --> |Query| example-table
     HttpApi --> |GET| Demo
-    Demo2 --> |PutItem| example-api
-    Demo2 --> |Query| example-api
+    Demo2 --> |PutItem| example-table
+    Demo2 --> |Query| example-table
     Demo2
   end
   subgraph EventBridge
