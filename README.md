@@ -61,7 +61,7 @@ An output file name must use the `.mmd` ending.
 
 The infra support is still limited and is first and foremost adapted for common needs in my own contexts. It currently supports DynamoDB (`AWS::DynamoDB::Table`), Lambda functions (`AWS::Serverless::Function`), HTTP APIs (`AWS::Serverless::HttpApi`), and S3 (`AWS::S3::Bucket`).
 
-## Defaults and assumptions
+## Updating README with your diagram
 
 If you want to have your `README.md` file updated with the diagram, the area between the start and end markers `<!-- START DIAGRAM -->` and `<!-- END DIAGRAM -->` will be used.
 
